@@ -8,16 +8,16 @@ export default {
     this.$geoJSON = L.geoJSON(this.geojson, this.options);
 
     if (this.$parent._isMounted) {
-      this.deferredMountedTo(this.$parent.$geoJSON);
+      this.deferredMountedTo(this.$parent);
     }
   },
   beforeDestroy() {
-    this.setVisible(false);
+    this.$parent.mapObject.removeLayer(this.$geoJSON);
   },
   watch: {
     geojson: {
       handler(newVal) {
-        this.$geoJSON.clearLayers()
+        this.$geoJSON.clearLayers();
         this.addGeoJSONData(newVal);
       },
       deep: true,
@@ -26,7 +26,7 @@ export default {
   methods: {
     deferredMountedTo(parent) {
       this.parent = parent;
-      this.$geoJSON.addTo(parent);
+      this.$geoJSON.addTo(parent.mapObject);
       for (var i = 0; i < this.$children.length; i++) {
         this.$children[i].deferredMountedTo(parent);
       }
